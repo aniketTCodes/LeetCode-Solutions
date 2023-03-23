@@ -19,11 +19,13 @@ public:
             res.push_back(ip);
             return;
         }
-        if(pos+1<s.size()&&isValid(s.substr(pos,1)))
+        if(candidates>4)
+        return;
+        if(pos+1<=s.size())
         backtrack(s,candidates+1,pos+1,ip+s.substr(pos,1)+"."); 
-        if(pos+2<s.size()&&isValid(s.substr(pos,2)))
+        if(pos+2<=s.size()&&isValid(s.substr(pos,2)))
         backtrack(s,candidates+1,pos+2,ip+s.substr(pos,2)+".");
-        if(pos+3<s.size()&&isValid(s.substr(pos,3)))
+        if(pos+3<=s.size()&&isValid(s.substr(pos,3)))
         backtrack(s,candidates+1,pos+3,ip+s.substr(pos,3)+".");
         
     }
