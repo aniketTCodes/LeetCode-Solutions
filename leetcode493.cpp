@@ -1,68 +1,63 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution{
-    public:
-    int reversePairs(vector<int>& nums){
-        long long int revPair=0;
-        int n=nums.size();
-        if(n==0)
-        return 0;
-
-        mergeSort(nums,0,n-1,revPair);
-        return revPair;
-        
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) {
+        long long int reversePair=0;
+        mergeSort(nums,0,nums.size()-1,reversePair);
+        return reversePair;
     }
 
-    void mergeSort(vector<int>& nums,int s,int e,long long int& revPair){
-        if(s>=e)
-        return ;
+    int merge(vector<int>& nums,int low,int mid,int high){
+        long long int revPairs=0;
+        int i,j;
+        //Calculating reverse pair
+         for(i=mid+1;i<=high;i++){
+            j=low;
+            while(j<=mid&&nums[i]*2>=nums[j])
+                j++;
+            revPairs+=(mid+1)-j;
+        }
 
-        int mid=(s+e)/2;
-        mergeSort(nums,s,mid,revPair);
-        mergeSort(nums,mid+1,e,revPair);
-        revPair+=merge(nums,s,mid,e);
-        
-        
-    }
+        //merging operation
 
-    int merge(vector<int> &nums,int s,int mid,int e){
-        int revPari=0;
-        vector<int> left(nums.begin()+s,nums.begin()+mid+1);
-        vector<int> right(nums.begin()+mid+1,nums.begin()+e+1);
-        int n1=left.size();
-        int n2=right.size();
-        int p1=0,p2=0,p3=s,t;
-        while(p1<n1&&p2<n2){
-            if(left[p1]<right[p2]){
-                nums[p3++]=left[p1++];
-            }
+        vector<int> left(nums.begin()+low,nums.begin()+mid+1);
+        vector<int> right(nums.begin()+mid+1,nums.begin()+high+1);
+        int p1=0,p2=0,p3=low,n1=left.size(),n2=right.size();
 
-            else{
-                int t=p1;
-                while(t<n1&&(long long int)left[t]<=2*(long long int)right[p2]){
-                    t+=1;
+        while(p3<=high){
+            if(p1<n1&&p2<n2){
+                if(left[p1]<=right[p2]){
+                    nums[p3++]=left[p1++];
                 }
-                revPari+=n1-t;
+                else
                 nums[p3++]=right[p2++];
             }
+            else if(p1>=n1&&p2<n2){
+                nums[p3++]=right[p2++];
+            }
+            else
+                nums[p3++]=left[p1++];
+            
         }
-        while(p1<n1){
-            nums[p3++]=left[p1++];
-        }
-        while(p2<n2){
-            nums[p3++]=right[p2++];
+        return revPairs;
+    }
 
+    void mergeSort(vector<int>& nums,int low,int high,long long int& revPairs){
+        if(low>=high){
+            return;
         }
+        int mid=(low+high)/2;
+        mergeSort(nums,low,mid,revPairs);
+        mergeSort(nums,mid+1,high,revPairs);
 
-        return revPari;
-        
+        revPairs+=merge(nums,low,mid,high);
     }
 };
 
 int main(){
     Solution s;
-
-    vector<int> nums{1,3,2,3,1};
+    vector<int> nums {2,4,3,5,1};
     cout<<s.reversePairs(nums);
 }

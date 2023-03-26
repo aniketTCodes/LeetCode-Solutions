@@ -1,50 +1,54 @@
 class Solution {
 public:
-    int n;
-    int snakesAndLadders(vector<vector<int>>& board) {
-        int steps=0;
-         n=board.size();
-        vector<vector<bool>> visited(n,vector<bool>(n,false));
-        queue<int> pq;
-        pq.push(1);
-        visited[n-1][0]=true;
-        while(!pq.empty()){
-            
-            for(int i=0;i<n;i++){
-                int curr=pq.front();
-            pq.pop();
-                if(curr==n*n) return steps;
-                for(int j=1;j<=6;j++){
-                vector<int> pos=getCoordinates(board,curr);
-                int r=pos[0];
-                int c=pos[1];
-                if(visited[r][c]==true) continue;
-                visited[r][c]=true;
-                if(board[r][c]==-1)
-                pq.push(curr+j);
-                else{
-                    pq.push(board[r][c]);
+    int reversePairs(vector<int>& nums) {
+        long long int reversePair=0;
+        mergeSort(nums,0,nums.size(),reversePair);
+        return reversePair;
+    }
+
+    int merge(vector<int>& nums,int low,int mid,int high){
+        long long int revPairs=0;
+        int i,j;
+        //Calculating reverse pair
+         for(i=mid+1;i<=high;i++){
+            j=low;
+            while(j<=mid&&nums[i]*2>nums[j])
+                j++;
+            revPairs+=(mid+1)-j;
+        }
+
+        //merging operation
+
+        vector<int> left(nums.begin()+low,nums.begin()+mid+1);
+        vector<int> right(nums.begin()+mid+1,nums.begin()+high+1);
+        int p1=0,p2=0,p3=low,n1=left.size(),n2=right.size();
+
+        while(p3<=high){
+            if(p1<=n1&&p2<=n2){
+                if(left[p1]<=right[p2]){
+                    nums[p3++]=left[p1++];
                 }
-
+                else
+                nums[p3++]=right[p2++];
             }
-        }
-        steps++;
-
-
+            else if(p1>=n1){
+                nums[p3++]=right[p2++];
+            }
+            else
+                nums[p3++]=left[p1++];
             
-
-            }
-            return -1;
-
         }
+        return revPairs;
+    }
 
+    void mergeSort(vector<int>& nums,int low,int high,long long int& revPairs){
+        if(low>=high){
+            return;
+        }
+        int mid=(low+high)/2;
+        mergeSort(nums,low,mid,revPairs);
+        mergeSort(nums,mid+1,high,revPairs);
 
-    vector<int> getCoordinates(vector<vector<int>>& board,int i){
-       int r=n-(i-1)/n -1;
-       int c=(i-1)%n;
-       if(r%2==n%2){
-        return {r,n-1-c}; 
-       }
-       return {r,c};
+        revPairs+=merge(nums,low,mid,high);
     }
 };
